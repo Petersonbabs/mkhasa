@@ -89,8 +89,9 @@ const LayerWithTable = () => {
         try {
             const response = await fetch(`https://mkhasa-bfdb6fabd978.herokuapp.com/api/v1/product/${id}`);
             const data = await response.json();
-            console.log(data.layerWith.id)
-            return data.map((item: any) => item.layerWith_.id)
+            console.log(data.layerWith)
+             
+            return data.layerWith.map((item: any) => item._id)
         } catch (error) {
             console.error('Error fetching singleproduct:', error);
         } finally {
@@ -102,16 +103,6 @@ const LayerWithTable = () => {
 
 
 
-    // filter products
-    // const filterProducts = async (allProducts: Product[], layerWithIds: Product[]) => {
-    //     console.log(allProducts);
-
-    //     const layerWithIdSet = new Set(layerWithIds.map(item => item.id));
-
-    //     console.log(layerWithIdSet);
-    //     return allProducts.filter(product => layerWithIdSet.has(product.id));
-
-    // }
 
     const processProduct = async (layerWithIds: string[], allProducts: Product[]) => {
         const layerWithIdset = new Set(layerWithIds);
@@ -127,10 +118,11 @@ const LayerWithTable = () => {
         try {
             const allProducts = await getAllProducts();
             const layerWithIds = await getLayerWithIds();
-            console.log(layerWithIds);
-            console.log(allProducts)
+            // console.log(layerWithIds);
+            // console.log(allProducts)
 
             let processedProducts = await processProduct(layerWithIds, allProducts);
+            // console.log(processedProducts)
 
             if (sortCriteria === 'inStock') {
                 processedProducts = processedProducts?.filter(product => Number(product.price.slice(1)) > 0);
@@ -152,8 +144,10 @@ const LayerWithTable = () => {
         setSortCriteria(criteria);
     };
 
-    const checkedProducts = products?.filter(product => [...products, product.checked]);
-
+    const checkedProducts = products?.filter(product => product.checked === true);
+    useEffect(()=>{
+        console.log(checkedProducts)
+    }, [fetchData])
 
 
     // add product to the layer with
@@ -186,12 +180,14 @@ const LayerWithTable = () => {
         setIsLoading(true);
 
         const selectedProductIds = products?.filter(product => product.checked).map(product => product.id);
+        console.log(selectedProductIds);
+        
         try {
             const response = await fetch(`https://mkhasa-bfdb6fabd978.herokuapp.com/api/v1/add/layer/product/${session?.user._id}/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify({ layerWith: selectedProductIds })
             });
-            console.log(response)
+            
             if (!response.ok) throw new Error('Failed to update best sellers');
             getLayerWithIds()
             toast.success('Layer with updated successfully');
