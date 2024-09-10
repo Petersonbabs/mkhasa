@@ -99,6 +99,8 @@ const BestSellersSlide = () => {
     const handleSaveAndContinue = async () => {
         setLoading(true);
         const token = localStorage.getItem('token');
+        console.log(token);
+        
         
         const selectedProductIds = products.filter(product => product.checked).map(product => product._id);
         console.log(selectedProductIds)
