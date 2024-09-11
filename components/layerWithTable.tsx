@@ -21,7 +21,7 @@ const LoadingSpinner = () => (
     </div>
 );
 
-const BestSellersSlide = () => {
+const LayerWithPage = () => {
     const { id } = useParams()
     const { data: session } = useSession()
     const [products, setProducts] = useState<Product[]>([]);
@@ -44,6 +44,7 @@ const BestSellersSlide = () => {
                     'Content-Type': 'application/json'
                 },
             });
+            
             if (!response.ok) throw new Error('Failed to fetch products');
             return await response.json();
         } catch (error) {
@@ -251,4 +252,4 @@ const BestSellersSlide = () => {
     );
 };
 
-export default BestSellersSlide;
+export default LayerWithPage;
